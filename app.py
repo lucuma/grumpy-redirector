@@ -6,13 +6,22 @@ from werkzeug.wrappers import Request, Response
 
 
 DEFAULT_TARGET = 'http://localhost:8080'
-HTTP_TEMPORARY_REDIRECT = 303
+
+
+def redirect_request(request):
+    target = request.args.get('target', DEFAULT_TARGET)
+    requests.post(target, data=request.form, files=request.files)
+
+
+def make_response(environ, start_response):
+    response = Response('Redirector activated!', mimetype='text/plain')
+    return response(environ, start_response)
 
 
 def application(environ, start_response):
     request = Request(environ)
-    target = request.args.get('target', DEFAULT_TARGET)
-    return redirect(target, code=HTTP_TEMPORARY_REDIRECT)
+    redirect_request(request)
+    return make_response(environ, start_response)
 
 
 if __name__ == '__main__':
