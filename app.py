@@ -15,7 +15,8 @@ def redirect_request(request):
 def application(environ, start_response):
     request = Request(environ)
 
-    redirect_request(request)
+    if request.method == 'POST':
+        redirect_request(request)
 
     response = Response('Redirector activated!', mimetype='text/plain')
     return response(environ, start_response)
