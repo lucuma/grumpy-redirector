@@ -10,7 +10,7 @@ DEFAULT_TARGET = 'http://localhost:8080'
 def application(request):
     target = request.args.get('target', DEFAULT_TARGET)
     r(target, data=request.form, files=request.files)
-    return Response('')
+    return Response('Redirector activated!')
 
 
 if __name__ == '__main__':
