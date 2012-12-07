@@ -6,13 +6,15 @@ import requests
 
 DEFAULT_TARGET = 'http://localhost:8080'
 
-@Request.application
-def application(request):
+
+def app(environ, start_response):
+    request = Request(environ)
     target = request.args.get('target', DEFAULT_TARGET)
-    r(target, data=request.form, files=request.files)
-    return Response('Redirector activated!')
+    requests.post(target, data=request.form, files=request.files)
+    response = Response('Redirector activated!', mimetype='text/plain')
+    return response(environ, start_response)
 
 
 if __name__ == '__main__':
     from werkzeug.serving import run_simple
-    run_simple('localhost', 4000, application)
+    run_simple('localhost', 4000, app)
