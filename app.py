@@ -1,27 +1,22 @@
 # -*- coding: utf-8 -*-
+import os
+import requests
 from werkzeug.utils import redirect
 from werkzeug.wrappers import Request, Response
-import requests
 
 
 DEFAULT_TARGET = 'http://localhost:8080'
-
-
-def redirect_request(request):
-    target = request.args.get('target', DEFAULT_TARGET)
-    requests.post(target, data=request.form, files=request.files)
+HTTP_TEMPORARY_REDIRECT = 303
 
 
 def application(environ, start_response):
     request = Request(environ)
-
-    if request.method == 'POST':
-        redirect_request(request)
-
-    response = Response('Redirector activated!', mimetype='text/plain')
-    return response(environ, start_response)
+    target = request.args.get('target', DEFAULT_TARGET)
+    return redirect(target, code=HTTP_TEMPORARY_REDIRECT)
 
 
 if __name__ == '__main__':
     from werkzeug.serving import run_simple
-    run_simple('localhost', 4000, application)
+    # Bind to PORT if defined, otherwise default to 5000.
+    port = int(os.environ.get('PORT', 5000))
+    run_simple('localhost', port, application)
