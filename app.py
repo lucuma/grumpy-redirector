@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 import os
 import requests
+from urllib import urlencode
 from werkzeug.utils import redirect
 from werkzeug.wrappers import Request, Response
 
 
-DEFAULT_TARGET = 'http://localhost:8080'
+DEFAULT_TARGET = 'http://localhost:8080/'
 
 
 def redirect_request(request):
-    target = request.args.get('target', DEFAULT_TARGET)
-    return redirect(target, code=307)
+    get_args = request.args.copy()
+    target = get_args.pop('target', DEFAULT_TARGET)
+    query_string = urlencode(get_args)
+    return redirect(target + '?' + query_string, code=307)
 
 
 def application(environ, start_response):
